@@ -1,5 +1,13 @@
+require "rubygems"
+require "bundler"
+require "pry"
+require "rspec/its"
+require "dry-types"
+
 require "bundler/setup"
-require "artisanal/model"
+require "artisanal-model"
+
+Dir[File.join(File.dirname(__FILE__), 'support/**/*.rb')].each { |f| require f }
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
@@ -11,4 +19,9 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
+
+  if config.files_to_run.one?
+    config.default_formatter = 'doc'
+  end
+  config.order = :random
 end
