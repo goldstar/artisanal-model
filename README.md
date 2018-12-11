@@ -69,7 +69,7 @@ For the following examples, consider the following `Model` class with some defau
 ```ruby
 class Model
   include Artisanal::Model(
-    defaults: { optional: true, type: Artisanal::Model::Types::Any }
+    defaults: { optional: true, type: Dry::Types::Any }
   )
 end
 ```
@@ -128,6 +128,20 @@ Person.new(first_name: 'Steve')
 #=> KeyError: Person: option 'last_name' is required
 ```
 
+### aliased fields
+
+The dry-initializer gem already lets you use the `:as` option to give your field a new name. To make this a little more straightforward, artisanal-model adds a `:from` option that is the inverse of `:as`:
+
+```ruby
+class Person < Model
+  attribute :email_address, as: :email
+  # is the same as  ...
+  attribute :email, from: :email_address
+end
+
+Person.new(email_address: 'john@example.com').email #=> 'john@example.com'
+```
+
 ### coercions
 
 In addition to the functionality dry-initializer provides, Artisanal::Model also adds some niceties that make the dsl a little less verbose. For example, coercions in dry-initializer are required to be a callable type (e.g. a proc or a [dry-type](https://dry-rb.org/gems/dry-types/)).
@@ -149,7 +163,8 @@ end
 class Person < Model  
   attribute :name
   attribute :address, Address
-  attribute :tags, [Tag]
+  attribute :tags, Array[Tag]
+  attribute :emails, Set[Dry::Types['string']]
 end
 
 attrs = {
@@ -163,7 +178,8 @@ attrs = {
   tags: [
     { name: 'Ruby' },
     { name: 'Developer' }
-  ]
+  ],
+  email: ['john@example.com', 'jsmith@example.com']
 }
 
 Person.new(attrs).tap do |person|
@@ -257,7 +273,7 @@ Dry-initializer [differentiates](https://dry-rb.org/gems/dry-initializer/skip-un
 This can be turned off through Artisanal::Model for performance reasons if you don't care about the differences between `nil` and undefined. However, if turned on, serializing to a hash will also exclude undefined values by default:
 
 ```ruby
-# Model.include Artisanal::Model(undefined: true, ...)
+# Model.include Artisanal::Model(include_undefined: true, ...)
 
 class Person < Model
   attribute :name
