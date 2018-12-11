@@ -273,7 +273,7 @@ Dry-initializer [differentiates](https://dry-rb.org/gems/dry-initializer/skip-un
 This can be turned off through Artisanal::Model for performance reasons if you don't care about the differences between `nil` and undefined. However, if turned on, serializing to a hash will also exclude undefined values by default:
 
 ```ruby
-# Model.include Artisanal::Model(include_undefined: true, ...)
+# Model.include Artisanal::Model(undefined: true, ...)
 
 class Person < Model
   attribute :name
@@ -282,8 +282,8 @@ class Person < Model
 end
 
 Person.new(name: 'John Smith', phone: nil).tap do |person|
-  person.to_h                  #=> { name: 'John Smith', phone: nil }
-  person.to_h(undefined: true) #=> { name: 'John Smith', email: nil, phone: nil }
+  person.to_h                          #=> { name: 'John Smith', phone: nil }
+  person.to_h(include_undefined: true) #=> { name: 'John Smith', email: nil, phone: nil }
 end
 ```
 
