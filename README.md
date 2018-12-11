@@ -287,6 +287,20 @@ Person.new(name: 'John Smith', phone: nil).tap do |person|
 end
 ```
 
+## Benchmarks
+
+Comparing artisanal-model with dry-initializer, hashie, and virtus:
+
+```
+Comparison:
+          plain Ruby:  2320096.9 i/s
+     dry-initializer:   285715.2 i/s - 8.12x  slower
+     artisanal-model:   182213.1 i/s - 12.73x  slower
+artisanal-model (WITH WRITERS):   178257.9 i/s - 13.02x  slower
+              virtus:   107824.3 i/s - 21.52x  slower
+              hashie:    28882.0 i/s - 80.33x  slower
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
