@@ -1,11 +1,12 @@
 Bundler.require(:benchmarks)
 
 class PlainRubyTest
-  attr_reader :foo, :bar
+  attr_reader :foo, :bar, :baz
 
-  def initialize(foo: "FOO", bar: "BAR")
+  def initialize(foo: "FOO", bar: "BAR", baz_old: "BAZ")
     @foo = foo
     @bar = bar
+    @baz = baz_old
     raise TypeError unless String === @foo
     raise TypeError unless String === @bar
   end
@@ -32,6 +33,15 @@ end
 require "artisanal-model"
 class ArtisanalTestWithWriters
   include Artisanal::Model(writable: true)
+
+  attribute :foo, proc(&:to_s), default: -> { "FOO" }
+  attribute :bar, proc(&:to_s), default: -> { "BAR" }
+  attribute :baz, proc(&:to_s), default: -> { "BAR" }, from: :baz_old
+end
+
+require "artisanal-model"
+class ArtisanalTestWithIndifferentAccess
+  include Artisanal::Model(symbolize: true)
 
   attribute :foo, proc(&:to_s), default: -> { "FOO" }
   attribute :bar, proc(&:to_s), default: -> { "BAR" }
@@ -79,6 +89,10 @@ Benchmark.ips do |x|
 
   x.report("artisanal-model (WITH WRITERS)") do
     ArtisanalTestWithWriters.new
+  end
+
+  x.report("artisanal-model (WITH INDIFFERENT ACCESS)") do
+    ArtisanalTestWithIndifferentAccess.new
   end
 
   x.report("hashie") do

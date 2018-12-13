@@ -36,6 +36,8 @@ module Artisanal::Model
     end
 
     def symbolize(attributes={})
+      return attributes unless config.symbolize?
+
       attributes.dup.tap do |attrs|
         (schema.keys.map(&:to_s) & attrs.keys).each do |key|
           attrs[key.intern] = attrs.delete(key)

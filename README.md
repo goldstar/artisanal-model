@@ -52,7 +52,7 @@ See the [dry-initializer](https://dry-rb.org/gems/dry-initializer/) documentatio
 
 #### `writable(boolean, default: false)`
 
-Setting `writable` true will enable the mass-assignment `#assign_attributes` method as well as add `writer: true` to the `defaults` configuration option.
+Setting `writable` to true will enable the mass-assignment `#assign_attributes` method as well as add `writer: true` to the `defaults` configuration option.
 
 You can also manually add `writer: true` to `defaults` without setting `writable` to true. This would give you attribute writers but skip creating the mass-assignment method.
 
@@ -61,6 +61,14 @@ You can also manually add `writer: true` to `defaults` without setting `writable
 Setting `undefined` to true will configure dry-initializer to differentiate between `nil` values and undefineds. It will also automatically filter out undefined values when serializing your model to a hash.
 
 See dry-initializer [Skip Undefined](https://dry-rb.org/gems/dry-initializer/skip-undefined/) documentation for more information.
+
+#### `symbolize(boolean, default: false)`
+
+Setting `symbolize` to true will make artisanal-model intern the keys of any attributes passed in during initialization and mass-assignment. Only attributes belonging to the model will be symbolized; all
+other keys will be left as strings.
+
+See the [integration test](blob/master/spec/artisanal/integration/stringified_arguments_spec.rb) for more details.
+See the [benchmarks](#benchmarks) for the performance impact of "indifferent access".
 
 ## Examples
 
@@ -289,16 +297,17 @@ end
 
 ## Benchmarks
 
-Comparing artisanal-model with dry-initializer, hashie, and virtus:
+Comparing artisanal-model with plain ruby, dry-initializer, hashie, and virtus:
 
 ```
 Comparison:
-          plain Ruby:  2320096.9 i/s
-     dry-initializer:   285715.2 i/s - 8.12x  slower
-     artisanal-model:   182213.1 i/s - 12.73x  slower
-artisanal-model (WITH WRITERS):   178257.9 i/s - 13.02x  slower
-              virtus:   107824.3 i/s - 21.52x  slower
-              hashie:    28882.0 i/s - 80.33x  slower
+          plain Ruby:  1881172.8 i/s
+     dry-initializer:   273697.0 i/s                      - 6.87x  slower
+     artisanal-model:   230740.9 i/s                      - 8.15x  slower
+artisanal-model (WITH WRITERS):   228224.4 i/s            - 8.24x  slower
+artisanal-model (WITH INDIFFERENT ACCESS):   167775.9 i/s - 11.21x  slower
+              virtus:   105083.7 i/s                      - 17.90x  slower
+              hashie:    31776.2 i/s                      - 59.20x  slower
 ```
 
 ## Development

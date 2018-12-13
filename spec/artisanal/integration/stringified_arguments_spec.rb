@@ -3,7 +3,7 @@ RSpec.describe "Stringified attributes" do
     Module.new.tap do |mod|
       module mod::Examples
         class Person
-          include Artisanal::Model(writable: true)
+          include Artisanal::Model(writable: true, symbolize: true)
 
           attribute :name, Dry::Types::Any
           attribute :email, Dry::Types::Any
