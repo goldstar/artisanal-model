@@ -36,6 +36,8 @@ module Artisanal::Model
     end
 
     def symbolize(attributes={})
+      attributes = attributes.to_h
+
       return attributes unless config.symbolize?
 
       attributes.dup.tap do |attrs|

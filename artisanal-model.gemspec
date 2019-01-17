@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = %q{A light attributes wrapper for dry-initializer}
   spec.description   = %q{A light attributes wrapper for dry-initializer}
-  spec.homepage      = "https://github.com/goldstar/supermodel"
+  spec.homepage      = "https://github.com/goldstar/artisanal-model"
   spec.license       = "MIT"
 
   # Specify which files should be added to the gem when it is released.
@@ -26,7 +26,6 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency "dry-initializer", ">= 2.5.0"
 
-  spec.add_development_dependency "bundler", "~> 1.16"
   spec.add_development_dependency "dry-types", ">= 0.13.3"
   spec.add_development_dependency "pry", "~> 0.10"
   spec.add_development_dependency "rake", "~> 10.0"
