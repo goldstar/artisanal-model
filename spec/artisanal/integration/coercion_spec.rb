@@ -63,4 +63,21 @@ RSpec.describe "Model with complex attribute coercion" do
     expect(person.emails).to all be_a String
     expect(person.emails.first).to eq 'john@example.com'
   end
+
+  context "when the enumerable options are empty" do
+    let(:data) {{
+      name: 'John Smith',
+      address: {
+        street: '123 Main St.',
+        city: 'Portland',
+        state: 'OR',
+        zip: '97212'
+      }
+    }}
+
+    it "defaults the field to an empty enumerable", :aggregate_failures do
+      expect(person.tags).to eq Array.new
+      expect(person.emails).to eq Set.new
+    end
+  end
 end

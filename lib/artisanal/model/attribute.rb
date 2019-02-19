@@ -7,8 +7,14 @@ module Artisanal::Model
       @type = coercer || options[:type]
       @options = options
 
+      # Convert :from option to :as
       if options.has_key? :from
         @name, options[:as] = options[:from], name
+      end
+
+      # Add default values for certain types
+      unless options.has_key?(:default)
+        options.merge!(default: type_default)
       end
 
       raise ArgumentError.new("type missing for attribute #{name}") if type.nil?
@@ -16,7 +22,7 @@ module Artisanal::Model
 
     def included(base)
       # Create dry-initializer option
-      base.option(name, type_builder(type), **options)
+      base.option(name, type_builder, **options)
 
       # Create writer method
       define_writer(base, name) if options[:writer]
@@ -37,7 +43,16 @@ module Artisanal::Model
       end
     end
 
-    def type_builder(type)
+    def type_default
+      case type
+      when Array
+        -> { Array.new }
+      when Set
+        -> { Set.new }
+      end
+    end
+
+    def type_builder(type=self.type)
       case type
       when Class
         ->(value) { type.new(value) }
