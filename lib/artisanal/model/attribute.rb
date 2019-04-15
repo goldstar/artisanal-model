@@ -3,9 +3,8 @@ module Artisanal::Model
     attr_reader :name, :type, :options
 
     def initialize(name, coercer=nil, **options)
-      @name = name
+      @name, @options = name, options
       @type = coercer || options[:type]
-      @options = options
 
       # Convert :from option to :as
       if options.has_key? :from
@@ -22,7 +21,7 @@ module Artisanal::Model
 
     def included(base)
       # Create dry-initializer option
-      base.option(name, type_builder, **options)
+      base.option(name, **options.merge(type: type_builder))
 
       # Create writer method
       define_writer(base, name) if options[:writer]

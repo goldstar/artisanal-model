@@ -28,6 +28,7 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "dry-types", ">= 0.13.3"
   spec.add_development_dependency "pry", "~> 0.10"
+  spec.add_development_dependency "rb-readline"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.0"
   spec.add_development_dependency "rspec-its", "~> 1.2"
