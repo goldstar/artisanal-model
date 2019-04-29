@@ -54,7 +54,7 @@ module Artisanal::Model
     def type_builder(type=self.type)
       case type
       when Class
-        ->(value) { type.new(value) }
+        ->(value) { value.is_a?(type) ? value : type.new(value) }
       when Enumerable
         coercer = type_builder(type.first)
         ->(collection) { type.class.new(collection.map { |value| coercer.call(value) }) }

@@ -11,6 +11,11 @@ RSpec.describe "Model with complex attribute coercion" do
           attribute :zip, Dry::Types::Any
         end
 
+        class Birthday
+          def initialize(*args)
+          end
+        end
+
         class Tag
           include Artisanal::Model
 
@@ -22,6 +27,7 @@ RSpec.describe "Model with complex attribute coercion" do
 
           attribute :name, Dry::Types::Any
           attribute :address, Address
+          attribute :birthday, Birthday
           attribute :tags, Array[Tag]
           attribute :emails, Set[Dry::Types['strict.string']]
         end
@@ -62,6 +68,15 @@ RSpec.describe "Model with complex attribute coercion" do
     expect(person.emails).to be_a Set
     expect(person.emails).to all be_a String
     expect(person.emails.first).to eq 'john@example.com'
+  end
+
+  context "when the elements are already class instances" do
+    let(:birthday) { ns::Examples::Birthday.new }
+
+    it "doesn't try to coerce them into the class" do
+      data[:birthday] = birthday
+      expect(person.birthday).to eq birthday
+    end
   end
 
   context "when the enumerable options are empty" do
