@@ -29,16 +29,48 @@ module Artisanal::Model
 
     protected
 
+    def class_coercer(type)
+      if type.respond_to? :artisanal_model
+        ->(value, parent) { value.is_a?(type) ? value : type.new(value, parent) }
+      else
+        ->(value) { value.is_a?(type) ? value : type.new(value) }
+      end
+    end
+
     def define_writer(base, target)
       define_method("#{target}=") do |value|
-        artisanal_model.schema[target].type.call(value).tap do |result|
-          instance_variable_set("@#{target}", result)
-        end
+        coercer = artisanal_model.schema[target].type
+        arity = coercer.is_a?(Proc) ? coercer.arity : coercer.method(:call).arity
+        args = arity.abs == 1 ? [value] : [value, self]
+
+        coercer.call(*args).tap { |result| instance_variable_set("@#{target}", result) }
       end
 
       # Scope writer to protected or private
       if [:protected, :private].include? options[:writer]
         base.send(options[:writer], "#{target}=")
+      end
+    end
+
+    def enumerable_coercer(type)
+      coercer = type_builder(type.first)
+      arity = coercer.is_a?(Proc) ? coercer.arity : coercer.method(:call).arity
+
+      if arity.abs == 1
+        ->(collection) { type.class.new(collection.map { |value| coercer.call(value) }) }
+      else
+        ->(collection, parent) { type.class.new(collection.map { |value| coercer.call(value, parent) }) }
+      end
+    end
+
+    def type_builder(type=self.type)
+      case type
+      when Class
+        class_coercer(type)
+      when Enumerable
+        enumerable_coercer(type)
+      else
+        type
       end
     end
 
@@ -48,18 +80,6 @@ module Artisanal::Model
         -> { Array.new }
       when Set
         -> { Set.new }
-      end
-    end
-
-    def type_builder(type=self.type)
-      case type
-      when Class
-        ->(value) { value.is_a?(type) ? value : type.new(value) }
-      when Enumerable
-        coercer = type_builder(type.first)
-        ->(collection) { type.class.new(collection.map { |value| coercer.call(value) }) }
-      else
-        type
       end
     end
   end

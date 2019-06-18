@@ -2,11 +2,16 @@ RSpec.describe "Model attribute writers" do
   let(:ns) {
     Module.new.tap do |mod|
       module mod::Examples
+        class Address
+          include Artisanal::Model
+        end
+
         class Person
           include Artisanal::Model
 
           attribute :name, Dry::Types::Any
           attribute :email, Dry::Types::Any, writer: true
+          attribute :address, Address, writer: true
           attribute :age, Dry::Types::Any, writer: :protected
           attribute :money, Dry::Types::Any, writer: :private
         end
@@ -32,6 +37,9 @@ RSpec.describe "Model attribute writers" do
     expect { person.email = 'bob@example.com' }.
       to change { person.email }.
       to('bob@example.com')
+    expect { person.address = {} }.
+      to change { person.address }.
+      to be_a ns::Examples::Address
   end
 
   it "creates a protected writer when :protected" do
