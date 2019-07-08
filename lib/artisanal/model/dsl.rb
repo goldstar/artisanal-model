@@ -10,6 +10,7 @@ module Artisanal::Model
 
     def inherited(subclass)
       subclass.include Artisanal::Model(artisanal_model.config.options)
+      super(subclass)
     end
 
     def artisanal_model
