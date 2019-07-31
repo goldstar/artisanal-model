@@ -9,6 +9,10 @@ RSpec.describe "Stringified attributes" do
           attribute :email, Dry::Types::Any
           attribute :age, proc(&:to_i)
         end
+
+        class Manager < Person
+          attribute :role, Dry::Types::Any
+        end
       end
     end
   }
@@ -17,10 +21,11 @@ RSpec.describe "Stringified attributes" do
     'name' => 'John Smith',
     email: 'john@example.com',
     'age' => '37',
-    'bank_account_balance' => 10000
+    'bank_account_balance' => 10000,
+    'role' => 'Director'
   }}
 
-  let(:person) { ns::Examples::Person.new(data) }
+  let(:person) { ns::Examples::Manager.new(data) }
 
   it "coerces the strings into symbols when initializing", :aggregate_failures do
     expect(person.name).to eq data['name']
@@ -38,5 +43,9 @@ RSpec.describe "Stringified attributes" do
 
   it "only interns the attributes included on the model" do
     expect(Symbol.all_symbols.map(&:to_s)).to_not include 'bank_account_balance'
+  end
+
+  it "handles inherited attributes" do
+    expect(person.role).to eq data['role']
   end
 end

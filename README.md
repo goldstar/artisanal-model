@@ -300,14 +300,25 @@ end
 Comparing artisanal-model with plain ruby, dry-initializer, hashie, and virtus:
 
 ```
+Calculating -------------------------------------
+          plain Ruby      2.493M (± 2.8%) i/s -     37.407M in  15.016557s
+     dry-initializer    402.247k (± 2.7%) i/s -      6.051M in  15.054567s
+     artisanal-model    322.343k (± 3.2%) i/s -      4.843M in  15.040670s
+artisanal-model (WITH WRITERS)
+                        329.785k (± 2.6%) i/s -      4.965M in  15.066329s
+artisanal-model (WITH INDIFFERENT ACCESS)
+                        284.767k (± 2.2%) i/s -      4.292M in  15.078616s
+              hashie     37.250k (± 1.8%) i/s -    559.827k in  15.034072s
+              virtus    136.092k (± 2.0%) i/s -      2.049M in  15.059855s
+
 Comparison:
-          plain Ruby:  1881172.8 i/s
-     dry-initializer:   273697.0 i/s                      - 6.87x  slower
-     artisanal-model:   230740.9 i/s                      - 8.15x  slower
-artisanal-model (WITH WRITERS):   228224.4 i/s            - 8.24x  slower
-artisanal-model (WITH INDIFFERENT ACCESS):   167775.9 i/s - 11.21x  slower
-              virtus:   105083.7 i/s                      - 17.90x  slower
-              hashie:    31776.2 i/s                      - 59.20x  slower
+          plain Ruby:  2492919.5 i/s
+     dry-initializer:   402247.4 i/s - 6.20x  slower
+artisanal-model (WITH WRITERS):   329785.0 i/s - 7.56x  slower
+     artisanal-model:   322342.7 i/s - 7.73x  slower
+artisanal-model (WITH INDIFFERENT ACCESS):   284766.8 i/s - 8.75x  slower
+              virtus:   136092.4 i/s - 18.32x  slower
+              hashie:    37250.4 i/s - 66.92x  slower
 ```
 
 ## Development

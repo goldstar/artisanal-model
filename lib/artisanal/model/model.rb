@@ -18,10 +18,6 @@ module Artisanal::Model
       @klass = klass
     end
 
-    def config
-      @config ||= Config.new
-    end
-
     def attribute(name, type=nil, **opts)
       klass.include Attribute.new(name, type, **config.defaults.merge(opts))
     end
@@ -35,13 +31,17 @@ module Artisanal::Model
       end
     end
 
+    def config
+      @config ||= Config.new
+    end
+
     def symbolize(attributes={})
       attributes = attributes.to_h
 
       return attributes unless config.symbolize?
 
       attributes.dup.tap do |attrs|
-        (schema.keys.map(&:to_s) & attrs.keys).each do |key|
+        (attribute_names & attrs.keys).each do |key|
           attrs[key.intern] = attrs.delete(key)
         end
       end
@@ -61,6 +61,10 @@ module Artisanal::Model
 
     protected
 
+    def attribute_defined?(instance, name)
+      instance.instance_variable_get("@#{name}") != Dry::Initializer::UNDEFINED
+    end
+
     def attribute_in_scope?(instance, name, scope)
       scope = Array(scope)
 
@@ -70,8 +74,8 @@ module Artisanal::Model
         (scope.include?(:private) && instance.private_methods.include?(name))
     end
 
-    def attribute_defined?(instance, name)
-      instance.instance_variable_get("@#{name}") != Dry::Initializer::UNDEFINED
+    def attribute_names
+      @attribute_names ||= schema.keys.map(&:to_s)
     end
 
     def method_missing(method, *args)
