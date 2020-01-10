@@ -49,7 +49,9 @@ module Artisanal::Model
 
     def to_h(instance, *args)
       attributes(instance, *args).each_with_object({}) do |(key, value), result|
-        if value.is_a? Enumerable
+        if value.is_a? Hash
+          result[key] = value
+        elsif value.is_a? Enumerable
           result[key] = value.map { |v| v.respond_to?(:to_h) ? v.to_h(*args) : v }
         elsif !value.nil? && value.respond_to?(:to_h)
           result[key] = value.to_h(*args)
