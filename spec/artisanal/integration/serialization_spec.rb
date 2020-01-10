@@ -27,6 +27,7 @@ RSpec.describe "Serialization" do
           attribute :address, Address
           attribute :tags, Array[Tag]
           attribute :emails, Set[Dry::Types['strict.string']]
+          attribute :job, Dry::Types['hash']
         end
       end
     end
@@ -48,7 +49,11 @@ RSpec.describe "Serialization" do
       { name: "ruby" },
       { name: "developer" }
     ]),
-    emails: ['john@example.com', 'jsmith@example.com']
+    emails: ['john@example.com', 'jsmith@example.com'],
+    job: {
+      title: "Developer",
+      company: "Goldstar"
+    }
   }}
 
   let(:public_attrs) {{
@@ -65,7 +70,11 @@ RSpec.describe "Serialization" do
       { name: "ruby" },
       { name: "developer" }
     ],
-    emails: ['john@example.com', 'jsmith@example.com']
+    emails: ['john@example.com', 'jsmith@example.com'],
+    job: {
+      title: "Developer",
+      company: "Goldstar"
+    }
   }}
 
   let(:protected_attrs) {{
