@@ -9,7 +9,7 @@ module Artisanal::Model
     end
 
     def inherited(subclass)
-      subclass.include Artisanal::Model(artisanal_model.config.options)
+      subclass.include Artisanal::Model(**artisanal_model.config.options)
       super(subclass)
     end
 
